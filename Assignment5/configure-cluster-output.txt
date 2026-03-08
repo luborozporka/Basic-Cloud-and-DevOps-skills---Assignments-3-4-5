@@ -1,0 +1,407 @@
+ubuntu@ip-172-31-32-171:~$ nano ansible_cluster_hosts
+ubuntu@ip-172-31-32-171:~$ rm configure-cluster.yml
+ubuntu@ip-172-31-32-171:~$ nano configure-cluster.yml
+ubuntu@ip-172-31-32-171:~$ ansible-playbook -i ansible_cluster_hosts configure-cluster.yml
+
+PLAY [Configure Docker Swarm Cluster] *******************************************************************************************************************************************************************************************
+
+TASK [Gathering Facts] **********************************************************************************************************************************************************************************************************
+ok: [ec2-63-180-169-225.eu-central-1.compute.amazonaws.com]
+ok: [ec2-3-120-131-12.eu-central-1.compute.amazonaws.com]
+
+TASK [Update Debian] ************************************************************************************************************************************************************************************************************
+changed: [ec2-63-180-169-225.eu-central-1.compute.amazonaws.com]
+changed: [ec2-3-120-131-12.eu-central-1.compute.amazonaws.com]
+
+TASK [Update RedHat] ************************************************************************************************************************************************************************************************************
+skipping: [ec2-63-180-169-225.eu-central-1.compute.amazonaws.com]
+skipping: [ec2-3-120-131-12.eu-central-1.compute.amazonaws.com]
+
+PLAY [Install required packages] ************************************************************************************************************************************************************************************************
+
+TASK [Gathering Facts] **********************************************************************************************************************************************************************************************************
+ok: [ec2-63-180-169-225.eu-central-1.compute.amazonaws.com]
+ok: [ec2-3-120-131-12.eu-central-1.compute.amazonaws.com]
+
+TASK [Remove old versions of Docker] ********************************************************************************************************************************************************************************************
+ok: [ec2-3-120-131-12.eu-central-1.compute.amazonaws.com]
+ok: [ec2-63-180-169-225.eu-central-1.compute.amazonaws.com]
+
+TASK [Install required packages for Docker] *************************************************************************************************************************************************************************************
+changed: [ec2-3-120-131-12.eu-central-1.compute.amazonaws.com]
+changed: [ec2-63-180-169-225.eu-central-1.compute.amazonaws.com]
+
+TASK [Add Docker GPG apt Key] ***************************************************************************************************************************************************************************************************
+changed: [ec2-63-180-169-225.eu-central-1.compute.amazonaws.com]
+changed: [ec2-3-120-131-12.eu-central-1.compute.amazonaws.com]
+
+TASK [Update Debian] ************************************************************************************************************************************************************************************************************
+changed: [ec2-63-180-169-225.eu-central-1.compute.amazonaws.com]
+changed: [ec2-3-120-131-12.eu-central-1.compute.amazonaws.com]
+
+TASK [Update RedHat] ************************************************************************************************************************************************************************************************************
+skipping: [ec2-63-180-169-225.eu-central-1.compute.amazonaws.com]
+skipping: [ec2-3-120-131-12.eu-central-1.compute.amazonaws.com]
+
+TASK [Get distribution codename] ************************************************************************************************************************************************************************************************
+changed: [ec2-63-180-169-225.eu-central-1.compute.amazonaws.com]
+changed: [ec2-3-120-131-12.eu-central-1.compute.amazonaws.com]
+
+TASK [Add Docker Repository] ****************************************************************************************************************************************************************************************************
+changed: [ec2-3-120-131-12.eu-central-1.compute.amazonaws.com]
+changed: [ec2-63-180-169-225.eu-central-1.compute.amazonaws.com]
+
+TASK [Update Debian again] ******************************************************************************************************************************************************************************************************
+changed: [ec2-63-180-169-225.eu-central-1.compute.amazonaws.com]
+changed: [ec2-3-120-131-12.eu-central-1.compute.amazonaws.com]
+
+TASK [Update RedHat again] ******************************************************************************************************************************************************************************************************
+skipping: [ec2-63-180-169-225.eu-central-1.compute.amazonaws.com]
+skipping: [ec2-3-120-131-12.eu-central-1.compute.amazonaws.com]
+
+TASK [Fix broken installs] ******************************************************************************************************************************************************************************************************
+changed: [ec2-63-180-169-225.eu-central-1.compute.amazonaws.com]
+changed: [ec2-3-120-131-12.eu-central-1.compute.amazonaws.com]
+
+TASK [Install Docker Engine] ****************************************************************************************************************************************************************************************************
+changed: [ec2-63-180-169-225.eu-central-1.compute.amazonaws.com]
+changed: [ec2-3-120-131-12.eu-central-1.compute.amazonaws.com]
+
+TASK [Restart service docker, in all cases] *************************************************************************************************************************************************************************************
+changed: [ec2-63-180-169-225.eu-central-1.compute.amazonaws.com]
+changed: [ec2-3-120-131-12.eu-central-1.compute.amazonaws.com]
+
+TASK [Verify docker installation] ***********************************************************************************************************************************************************************************************
+changed: [ec2-63-180-169-225.eu-central-1.compute.amazonaws.com]
+changed: [ec2-3-120-131-12.eu-central-1.compute.amazonaws.com]
+
+TASK [Print docker output] ******************************************************************************************************************************************************************************************************
+ok: [ec2-63-180-169-225.eu-central-1.compute.amazonaws.com]
+ok: [ec2-3-120-131-12.eu-central-1.compute.amazonaws.com]
+
+PLAY [Join command retrieval] ***************************************************************************************************************************************************************************************************
+
+TASK [Gathering Facts] **********************************************************************************************************************************************************************************************************
+ok: [ec2-63-180-169-225.eu-central-1.compute.amazonaws.com]
+
+TASK [Print docker swarm init cmd] **********************************************************************************************************************************************************************************************
+ok: [ec2-63-180-169-225.eu-central-1.compute.amazonaws.com] => {
+    "msg": "docker swarm init  | grep 'docker swarm join --token'"
+}
+
+TASK [Docker swarm init] ********************************************************************************************************************************************************************************************************
+changed: [ec2-63-180-169-225.eu-central-1.compute.amazonaws.com]
+
+TASK [Add join cmd to dummy host] ***********************************************************************************************************************************************************************************************
+changed: [ec2-63-180-169-225.eu-central-1.compute.amazonaws.com]
+
+PLAY [Join workers to swarm] ****************************************************************************************************************************************************************************************************
+
+TASK [Gathering Facts] **********************************************************************************************************************************************************************************************************
+ok: [ec2-3-120-131-12.eu-central-1.compute.amazonaws.com]
+
+TASK [Print join cmd] ***********************************************************************************************************************************************************************************************************
+ok: [ec2-3-120-131-12.eu-central-1.compute.amazonaws.com] => {
+    "msg": "[Worker]     docker swarm join --token SWMTKN-1-5n3piod6ukv5gqxz7twzfgo8hht52r4o2qf5iv1hmxhy7ux9uh-2rsryiobtdau0pnna7u40nxk7 172.31.42.169:2377"
+}
+
+TASK [Join] *********************************************************************************************************************************************************************************************************************
+changed: [ec2-3-120-131-12.eu-central-1.compute.amazonaws.com]
+
+PLAY [Deploy Docker Swarm Visualizer] *******************************************************************************************************************************************************************************************
+
+TASK [Gathering Facts] **********************************************************************************************************************************************************************************************************
+ok: [ec2-63-180-169-225.eu-central-1.compute.amazonaws.com]
+
+TASK [Get nodes] ****************************************************************************************************************************************************************************************************************
+changed: [ec2-63-180-169-225.eu-central-1.compute.amazonaws.com]
+
+TASK [Print nodes] **************************************************************************************************************************************************************************************************************
+ok: [ec2-63-180-169-225.eu-central-1.compute.amazonaws.com] => {
+    "nodes_out": {
+        "changed": true,
+        "cmd": [
+            "docker",
+            "node",
+            "ls"
+        ],
+        "delta": "0:00:00.035257",
+        "end": "2026-03-08 16:21:55.913840",
+        "failed": false,
+        "msg": "",
+        "rc": 0,
+        "start": "2026-03-08 16:21:55.878583",
+        "stderr": "",
+        "stderr_lines": [],
+        "stdout": "ID                            HOSTNAME           STATUS    AVAILABILITY   MANAGER STATUS   ENGINE VERSION\nq3ip8fc6acpdomqdvgig0gxdb     ip-172-31-34-86    Ready     Active                          29.3.0\nifnn2otbcsas9qj9zbn1jnzmv *   ip-172-31-42-169   Ready     Active         Leader           29.3.0",
+        "stdout_lines": [
+            "ID                            HOSTNAME           STATUS    AVAILABILITY   MANAGER STATUS   ENGINE VERSION",
+            "q3ip8fc6acpdomqdvgig0gxdb     ip-172-31-34-86    Ready     Active                          29.3.0",
+            "ifnn2otbcsas9qj9zbn1jnzmv *   ip-172-31-42-169   Ready     Active         Leader           29.3.0"
+        ]
+    }
+}
+
+TASK [Remove visualizer] ********************************************************************************************************************************************************************************************************
+ok: [ec2-63-180-169-225.eu-central-1.compute.amazonaws.com]
+
+TASK [Run visualizer] ***********************************************************************************************************************************************************************************************************
+changed: [ec2-63-180-169-225.eu-central-1.compute.amazonaws.com]
+
+TASK [Print swarm_service] ******************************************************************************************************************************************************************************************************
+ok: [ec2-63-180-169-225.eu-central-1.compute.amazonaws.com] => {
+    "visualizer": {
+        "changed": true,
+        "cmd": [
+            "docker",
+            "service",
+            "create",
+            "--name=viz",
+            "--publish=5000:8080/tcp",
+            "--constraint=node.role==manager",
+            "--mount=type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock",
+            "dockersamples/visualizer"
+        ],
+        "delta": "0:00:46.407258",
+        "end": "2026-03-08 16:22:43.018235",
+        "failed": false,
+        "msg": "",
+        "rc": 0,
+        "start": "2026-03-08 16:21:56.610977",
+        "stderr": "",
+        "stderr_lines": [],
+        "stdout": "w7pbaabrxwt3dk18eb2617ayg\noverall progress: 0 out of 1 tasks\n1/1:  \noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 0 out of 1 tasks\noverall progress: 1 out of 1 tasks\nverify: Waiting 5 seconds to verify that tasks are stable...\nverify: Waiting 5 seconds to verify that tasks are stable...\nverify: Waiting 5 seconds to verify that tasks are stable...\nverify: Waiting 5 seconds to verify that tasks are stable...\nverify: Waiting 5 seconds to verify that tasks are stable...\nverify: Waiting 4 seconds to verify that tasks are stable...\nverify: Waiting 4 seconds to verify that tasks are stable...\nverify: Waiting 4 seconds to verify that tasks are stable...\nverify: Waiting 4 seconds to verify that tasks are stable...\nverify: Waiting 4 seconds to verify that tasks are stable...\nverify: Waiting 3 seconds to verify that tasks are stable...\nverify: Waiting 3 seconds to verify that tasks are stable...\nverify: Waiting 3 seconds to verify that tasks are stable...\nverify: Waiting 3 seconds to verify that tasks are stable...\nverify: Waiting 3 seconds to verify that tasks are stable...\nverify: Waiting 2 seconds to verify that tasks are stable...\nverify: Waiting 2 seconds to verify that tasks are stable...\nverify: Waiting 2 seconds to verify that tasks are stable...\nverify: Waiting 2 seconds to verify that tasks are stable...\nverify: Waiting 2 seconds to verify that tasks are stable...\nverify: Waiting 1 seconds to verify that tasks are stable...\nverify: Waiting 1 seconds to verify that tasks are stable...\nverify: Waiting 1 seconds to verify that tasks are stable...\nverify: Waiting 1 seconds to verify that tasks are stable...\nverify: Waiting 1 seconds to verify that tasks are stable...\nverify: Service w7pbaabrxwt3dk18eb2617ayg converged",
+        "stdout_lines": [
+            "w7pbaabrxwt3dk18eb2617ayg",
+            "overall progress: 0 out of 1 tasks",
+            "1/1:  ",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 0 out of 1 tasks",
+            "overall progress: 1 out of 1 tasks",
+            "verify: Waiting 5 seconds to verify that tasks are stable...",
+            "verify: Waiting 5 seconds to verify that tasks are stable...",
+            "verify: Waiting 5 seconds to verify that tasks are stable...",
+            "verify: Waiting 5 seconds to verify that tasks are stable...",
+            "verify: Waiting 5 seconds to verify that tasks are stable...",
+            "verify: Waiting 4 seconds to verify that tasks are stable...",
+            "verify: Waiting 4 seconds to verify that tasks are stable...",
+            "verify: Waiting 4 seconds to verify that tasks are stable...",
+            "verify: Waiting 4 seconds to verify that tasks are stable...",
+            "verify: Waiting 4 seconds to verify that tasks are stable...",
+            "verify: Waiting 3 seconds to verify that tasks are stable...",
+            "verify: Waiting 3 seconds to verify that tasks are stable...",
+            "verify: Waiting 3 seconds to verify that tasks are stable...",
+            "verify: Waiting 3 seconds to verify that tasks are stable...",
+            "verify: Waiting 3 seconds to verify that tasks are stable...",
+            "verify: Waiting 2 seconds to verify that tasks are stable...",
+            "verify: Waiting 2 seconds to verify that tasks are stable...",
+            "verify: Waiting 2 seconds to verify that tasks are stable...",
+            "verify: Waiting 2 seconds to verify that tasks are stable...",
+            "verify: Waiting 2 seconds to verify that tasks are stable...",
+            "verify: Waiting 1 seconds to verify that tasks are stable...",
+            "verify: Waiting 1 seconds to verify that tasks are stable...",
+            "verify: Waiting 1 seconds to verify that tasks are stable...",
+            "verify: Waiting 1 seconds to verify that tasks are stable...",
+            "verify: Waiting 1 seconds to verify that tasks are stable...",
+            "verify: Service w7pbaabrxwt3dk18eb2617ayg converged"
+        ]
+    }
+}
+
+PLAY RECAP **********************************************************************************************************************************************************************************************************************
+ec2-3-120-131-12.eu-central-1.compute.amazonaws.com : ok=18   changed=12   unreachable=0    failed=0    skipped=3    rescued=0    ignored=0
+ec2-63-180-169-225.eu-central-1.compute.amazonaws.com : ok=25   changed=15   unreachable=0    failed=0    skipped=3    rescued=0    ignored=0
+
+ubuntu@ip-172-31-32-171:~$ 

@@ -1,0 +1,179 @@
+---
+- name: Configure Docker Swarm Cluster
+  hosts: all
+  become: true
+  tasks:
+
+    - name: Update Debian
+      ansible.builtin.apt:
+        update_cache: true
+      when: ansible_os_family == 'Debian'
+
+    - name: Update RedHat
+      ansible.builtin.dnf:
+        update_cache: true
+      when: ansible_os_family == 'RedHat'
+
+- name: Install required packages
+  hosts: cluster
+  gather_facts: true
+  become: true
+  tasks:
+
+    - name: Remove old versions of Docker
+      ansible.builtin.package:
+        name:
+          - docker
+          - docker-engine
+          - docker.io
+          - containerd
+          - runc
+        state: absent
+
+    - name: Install required packages for Docker
+      ansible.builtin.package:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+        state: present
+
+    - name: Add Docker GPG apt Key
+      ansible.builtin.apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+      become: true
+
+    - name: Update Debian
+      ansible.builtin.apt:
+        update_cache: true
+      when: ansible_os_family == 'Debian'
+
+    - name: Update RedHat
+      ansible.builtin.dnf:
+        update_cache: true
+      when: ansible_os_family == 'RedHat'
+
+    - name: Get distribution codename
+      ansible.builtin.shell: "echo $(lsb_release -cs)"
+      register: dist
+      changed_when: dist.rc == 0
+
+    - name: Add Docker Repository
+      ansible.legacy.apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu "{{ dist.stdout }}" stable
+        state: present
+      become: true
+
+    - name: Update Debian again
+      ansible.builtin.apt:
+        update_cache: true
+      when: ansible_os_family == 'Debian'
+
+    - name: Update RedHat again
+      ansible.builtin.dnf:
+        update_cache: true
+      when: ansible_os_family == 'RedHat'
+
+    - name: Fix broken installs
+      ansible.legacy.command: "dpkg --configure -a"
+      become: true
+      register: dpkg_fix
+      changed_when: dpkg_fix.rc == 0
+
+    - name: Install Docker Engine
+      ansible.legacy.package:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        state: present
+      become: true
+
+    - name: Restart service docker, in all cases
+      ansible.legacy.service:
+        name: docker
+        state: restarted
+      failed_when: false
+      become: true
+
+    - name: Verify docker installation
+      ansible.legacy.command:
+        cmd: "docker run hello-world"
+      register: docker_output
+      changed_when: docker_output.rc == 0
+
+    - name: Print docker output
+      ansible.legacy.command: "docker swarm leave --force"
+      become: true
+      failed_when: false
+      register: docker_swarm_output
+      changed_when: docker_swarm_output.rc == 0
+
+- name: Join command retrieval
+  hosts: master
+  tasks:
+
+    - name: Print docker swarm init cmd
+      ansible.builtin.debug:
+        msg: "docker swarm init  | grep 'docker swarm join --token'"
+
+    - name: Docker swarm init
+      ansible.builtin.shell: "docker swarm init | grep 'docker swarm join --token'"
+      become: true
+      register: join_cmd
+      changed_when: join_cmd.rc == 0
+
+    - name: Add join cmd to dummy host
+      ansible.builtin.add_host:
+        name: "join_cmd_holder"
+        cmd: "{{ join_cmd.stdout }}"
+
+- name: Join workers to swarm
+  hosts: worker
+  tasks:
+    - name: Print join cmd
+      ansible.builtin.debug:
+        msg: "[Worker] {{ hostvars['join_cmd_holder']['cmd'] }}"
+
+    - name: Join
+      ansible.builtin.shell: "{{ hostvars['join_cmd_holder']['cmd'] }}"
+      become: true
+
+- name: Deploy Docker Swarm Visualizer
+  hosts: master
+  tasks:
+    - name: Get nodes
+      become: true
+      ansible.legacy.command:
+        cmd: "docker node ls"
+      register: nodes_out
+      changed_when: nodes_out.rc == 0
+
+    - name: Print nodes
+      ansible.builtin.debug:
+        var: nodes_out
+
+    - name: Remove visualizer
+      ansible.legacy.command:
+        cmd: "docker service rm viz"
+      become: true
+      failed_when: false
+      register: rm_viz
+      changed_when: rm_viz.rc == 0
+
+    - name: Run visualizer
+      ansible.legacy.command:
+        cmd: "docker service create \
+              --name=viz --publish=5000:8080/tcp \
+              --constraint=node.role==manager \
+              --mount=type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock dockersamples/visualizer"
+      become: true
+      register: visualizer
+      changed_when: visualizer.rc == 0
+
+    - name: Print swarm_service
+      ansible.builtin.debug:
+        var: visualizer
