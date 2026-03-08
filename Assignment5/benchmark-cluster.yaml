@@ -1,0 +1,107 @@
+---
+- name: Benchmark Docker Swarm whoami service
+  hosts: localhost
+  gather_facts: true
+  become: true
+  tasks:
+    - name: Update Debian
+      ansible.builtin.apt:
+        update_cache: true
+      when: ansible_os_family == 'Debian'
+
+    - name: Update RedHat
+      ansible.builtin.dnf:
+        update_cache: true
+      when: ansible_os_family == 'RedHat'
+
+    - name: Install wrk benchmarking tool
+      ansible.builtin.package:
+        name:
+          - wrk
+        state: present
+
+- name: Deploy whoami service on Docker Swarm
+  hosts: master
+  tasks:
+    - name: Remove whoami service
+      ansible.legacy.command:
+        cmd: "docker service rm whoami"
+      become: true
+      register: rm_output
+      failed_when: false
+      changed_when: rm_output.rc == 0
+
+    - name: Create whoami service
+      ansible.legacy.command:
+        cmd: "docker service create --name whoami --publish published=8080,target=80 --replicas 1 containous/whoami"
+      become: true
+      register: create_output
+      changed_when: create_output.rc == 0
+
+- name: Benchmark whoami service (1 replica)
+  hosts: localhost
+  gather_facts: true
+  tasks:
+    - name: Run wrk benchmark against whoami service
+      ansible.legacy.command:
+        cmd: "wrk -t4 -c5 -d30s http://{{ hostvars | first }}:8080"
+      register: wrk_output
+      changed_when: wrk_output.rc == 0
+
+    - name: Display wrk benchmark results
+      ansible.builtin.debug:
+        msg: '{{ wrk_output.stdout_lines | select("search", "Req/Sec") }}'
+
+- name: Scale and benchmark (2 replicas)
+  hosts: master
+  become: true
+  tasks:
+    - name: Scale whoami to 2
+      ansible.legacy.command: "docker service scale whoami=2"
+
+- name: Run benchmark (2 replicas)
+  hosts: localhost
+  tasks:
+    - name: wrk benchmark 2
+      ansible.legacy.command: "wrk -t4 -c5 -d30s http://{{ hostvars | first }}:8080"
+      register: wrk_2
+      changed_when: false
+    - name: Print 2 replicas req/sec
+      ansible.builtin.debug:
+        msg: '{{ wrk_2.stdout_lines | select("search", "Req/Sec") }}'
+
+- name: Scale and benchmark (4 replicas)
+  hosts: master
+  become: true
+  tasks:
+    - name: Scale whoami to 4
+      ansible.legacy.command: "docker service scale whoami=4"
+
+- name: Run benchmark (4 replicas)
+  hosts: localhost
+  tasks:
+    - name: wrk benchmark 4
+      ansible.legacy.command: "wrk -t4 -c5 -d30s http://{{ hostvars | first }}:8080"
+      register: wrk_4
+      changed_when: false
+    - name: Print 4 replicas req/sec
+      ansible.builtin.debug:
+        msg: '{{ wrk_4.stdout_lines | select("search", "Req/Sec") }}'
+
+- name: Scale and benchmark (8 replicas)
+  hosts: master
+  become: true
+  tasks:
+    - name: Scale whoami to 8
+      ansible.legacy.command: "docker service scale whoami=8"
+
+- name: Run benchmark (8 replicas)
+  hosts: localhost
+  tasks:
+    - name: wrk benchmark 8
+      ansible.legacy.command: "wrk -t4 -c5 -d30s http://{{ hostvars | first }}:8080"
+      register: wrk_8
+      changed_when: false
+    - name: Print 8 replicas req/sec
+      ansible.builtin.debug:
+        msg: '{{ wrk_8.stdout_lines | select("search", "Req/Sec") }}'
