@@ -23,3 +23,5 @@ Other Amazon services that can employ CloudWatch Alarms are Amazon SNS (for send
 Yes, they vary. For AMIs/VMs, basic infrastructure metrics are collected, but metrics like memory and disk space require manual installation of the CloudWatch Agent. 
 On the other hand, AWS Lambda sends metrics to CloudWatch without agents, since AWS manages the infrastructure. 
 Finally, containerized applications require additional tools, which use embedded agents to gather cluster, node, and pod-level data.
+
+![AWS Academy Cloud Foundations labs + modules](labs-and-modules.png)
